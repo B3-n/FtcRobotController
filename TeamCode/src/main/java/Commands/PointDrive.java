@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.Camera;
 
 import Subsystems.FourWheelEncoderDrive;
+import Subsystems.PositionEstimator;
+
 import Utils.PIDController;
 import Utils.TurnPID;
 
@@ -15,7 +17,7 @@ public class PointDrive extends CommandBase {
     ElapsedTime runtime = new ElapsedTime();
     private Camera camera;
 
-    private FourWheelEncoderDrive fourWheelEncoderDrive;
+    Subsystems.PositionEstimator positionEstimator;
 
     Subsystems.FourWheelEncoderDrive m_drive;
     double m_speed, m_xTarget, m_yTarget, m_turnTarget, m_timeoutS;
@@ -23,9 +25,6 @@ public class PointDrive extends CommandBase {
     PIDController xControl = new PIDController(0.1, 0.0, 0.0);
     PIDController yControl = new PIDController(0.1, 0.0, 0.0);
     TurnPID turnControl = new TurnPID(0.1, 0.0, 0.0);
-
-    double xRobotPosition = 0.0;
-    double yRobotPosition = 0.0;
 
     public PointDrive(FourWheelEncoderDrive drive, double speed, double xTarget, double yTarget, double turnTarget, double timeoutS) {
         m_drive = drive;
@@ -45,6 +44,10 @@ public class PointDrive extends CommandBase {
         runtime.reset();
 
         double heading = m_drive.getHeading();
+        double []position = positionEstimator.updatePosition();
+        double xRobotPosition = position[0];
+        double yRobotPosition = position[1];
+
         double x = xControl.calculate(m_xTarget, xRobotPosition, new ElapsedTime());
         double y = yControl.calculate(m_yTarget, yRobotPosition, new ElapsedTime());
         double turn = turnControl.calculate(m_turnTarget, heading, new ElapsedTime());

@@ -15,6 +15,8 @@ public class PathPlanner extends SequentialCommandGroup {
                  turn(degrees),
                  timeout(seconds)
                 ) */
+
+                new PointDrive(driveSubsystem, 0.5, 10, 10, 0, 40)
         );
     }
 }
