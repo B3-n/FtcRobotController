@@ -4,23 +4,27 @@ import static Subsystems.FourWheelEncoderDrive.COUNTS_PER_INCH;
 
 public class PositionEstimator {
 
-    FourWheelEncoderDrive driveSubsystem;
+    FourWheelEncoderDrive m_driveSubsystem;
     double prevFrontLeftEncoder;
     double prevFrontRightEncoder;
     double prevBackLeftEncoder;
     double prevBackRightEncoder;
     double xPosition;
     double yPosition;
+    double m_angle;
 
-    public double[] updatePosition() {
-        double angle = driveSubsystem.getHeading();
-        angle += 360 + 90;
-        angle %= 360;
+    public double[] updatePosition(FourWheelEncoderDrive driveSubsystem, double angle) {
+        m_driveSubsystem = driveSubsystem;
+        m_angle = angle;
+        m_angle += 360 + 90;
+        m_angle %= 360;
+        m_angle /= 360;
+        m_angle *= 2 * Math.PI;
 
-        double frontLeftDistance = driveSubsystem.frontLeft.getCurrentPosition();
-        double frontRightDistance = driveSubsystem.frontRight.getCurrentPosition();
-        double backRightDistance = driveSubsystem.backRight.getCurrentPosition();
-        double backLeftDistance = driveSubsystem.backLeft.getCurrentPosition();
+        double frontLeftDistance = m_driveSubsystem.frontLeft.getCurrentPosition();
+        double frontRightDistance = m_driveSubsystem.frontRight.getCurrentPosition();
+        double backRightDistance = m_driveSubsystem.backRight.getCurrentPosition();
+        double backLeftDistance = m_driveSubsystem.backLeft.getCurrentPosition();
 
         double xDistance  = - (frontLeftDistance - prevFrontLeftEncoder)
                 + (frontRightDistance - prevFrontRightEncoder)
@@ -40,13 +44,14 @@ public class PositionEstimator {
         prevFrontRightEncoder = frontRightDistance;
         prevBackLeftEncoder = backLeftDistance;
         prevBackRightEncoder = backRightDistance;
-        xPosition += yDistance * Math.cos(angle) + xDistance * Math.cos(angle - 90);
-        yPosition += yDistance * Math.sin(angle) + xDistance * Math.sin(angle - 90);
+        xPosition += yDistance * Math.cos(m_angle) + xDistance * Math.cos(m_angle - Math.PI / 2);
+        yPosition += yDistance * Math.sin(m_angle) + xDistance * Math.sin(m_angle - Math.PI / 2);
 
-        double []position = {
-                xPosition,
-                yPosition
-        };
+        double[] position;
+        position = new double[2];
+
+        position[0] = xPosition;
+        position[1] = yPosition;
 
         return position;
     }

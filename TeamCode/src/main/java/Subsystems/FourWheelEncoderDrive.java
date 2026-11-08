@@ -1,7 +1,5 @@
 package Subsystems;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -19,7 +17,7 @@ public class FourWheelEncoderDrive extends SubsystemBase {
 
     Motor frontLeft, backLeft, frontRight, backRight;
     // MotorEx.Encoder frontLeft_encoder, backLeft_encoder, frontRight_encoder, backRight_encoder;
-    private BHI260IMU imu;
+    private IMU imu;
     // private MecanumDriveOdometry odometry;
 
     static final double     COUNTS_PER_MOTOR_REV    = 1440 ;    // eg: TETRIX Motor Encoder
@@ -28,11 +26,17 @@ public class FourWheelEncoderDrive extends SubsystemBase {
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
 
+    HardwareMap m_hardwareMap;
+
+    public FourWheelEncoderDrive(HardwareMap hardwareMap) {
+        m_hardwareMap = hardwareMap;
+    }
+
     public void initDriveWheels() {
-        frontLeft = new Motor(hardwareMap, "FrontLeft");
-        frontRight = new Motor(hardwareMap, "FrontRight");
-        backLeft = new Motor(hardwareMap, "BackLeft");
-        backRight = new Motor(hardwareMap, "BackRight");
+        frontLeft = new Motor(m_hardwareMap, "FrontLeft", Motor.GoBILDA.RPM_312);
+        frontRight = new Motor(m_hardwareMap, "FrontRight", Motor.GoBILDA.RPM_312);
+        backLeft = new Motor(m_hardwareMap, "BackLeft", Motor.GoBILDA.RPM_312);
+        backRight = new Motor(m_hardwareMap, "BackRight", Motor.GoBILDA.RPM_312);
 
         frontLeft.setInverted(true);
         backLeft.setInverted(true);
@@ -57,11 +61,14 @@ public class FourWheelEncoderDrive extends SubsystemBase {
         backLeft.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         backRight.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
-        // Setup Encoder
+        frontLeft.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontRight.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeft.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRight.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void initIMU() {
-        imu = hardwareMap.get(BHI260IMU.class, "imu");
+        this.imu = m_hardwareMap.get(IMU.class, "imu");
         IMU.Parameters parameters = new IMU.Parameters(
                 new RevHubOrientationOnRobot(
                         RevHubOrientationOnRobot.LogoFacingDirection.UP,

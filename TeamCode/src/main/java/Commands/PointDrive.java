@@ -1,6 +1,7 @@
 package Commands;
 
 import com.arcrobotics.ftclib.command.CommandBase;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
@@ -17,16 +18,18 @@ public class PointDrive extends CommandBase {
     ElapsedTime runtime = new ElapsedTime();
     private Camera camera;
 
-    Subsystems.PositionEstimator positionEstimator;
-
     Subsystems.FourWheelEncoderDrive m_drive;
+
+    PositionEstimator m_positionEstimator;
+
     double m_speed, m_xTarget, m_yTarget, m_turnTarget, m_timeoutS;
 
     PIDController xControl = new PIDController(0.1, 0.0, 0.0);
     PIDController yControl = new PIDController(0.1, 0.0, 0.0);
     TurnPID turnControl = new TurnPID(0.1, 0.0, 0.0);
 
-    public PointDrive(FourWheelEncoderDrive drive, double speed, double xTarget, double yTarget, double turnTarget, double timeoutS) {
+    public PointDrive(PositionEstimator positionEstimator, FourWheelEncoderDrive drive, double speed, double xTarget, double yTarget, double turnTarget, double timeoutS) {
+        m_positionEstimator = positionEstimator;
         m_drive = drive;
         m_speed = speed;
         m_xTarget = xTarget;
@@ -37,14 +40,11 @@ public class PointDrive extends CommandBase {
 
     @Override
     public void initialize() {
-        FourWheelEncoderDrive drive = new FourWheelEncoderDrive();
-        drive.initDriveWheels();
-        drive.initIMU();
 
         runtime.reset();
 
         double heading = m_drive.getHeading();
-        double []position = positionEstimator.updatePosition();
+        double[] position = m_positionEstimator.updatePosition(m_drive, heading);
         double xRobotPosition = position[0];
         double yRobotPosition = position[1];
 

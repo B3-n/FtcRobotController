@@ -1,10 +1,12 @@
 package Commands;
 
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
+
 import Subsystems.FourWheelEncoderDrive;
+import Subsystems.PositionEstimator;
 
 public class PathPlanner extends SequentialCommandGroup {
-    public PathPlanner(FourWheelEncoderDrive driveSubsystem) {
+    public PathPlanner(PositionEstimator positionEstimator, FourWheelEncoderDrive driveSubsystem) {
         addCommands(
                 /* Place movements here:
                 new PointDrive(
@@ -16,7 +18,7 @@ public class PathPlanner extends SequentialCommandGroup {
                  timeout(seconds)
                 ) */
 
-                new PointDrive(driveSubsystem, 0.5, 10, 10, 0, 40)
+                new PointDrive(positionEstimator, driveSubsystem, 0.5, 10, 10, 0, 40)
         );
     }
 }
