@@ -38,39 +38,36 @@ public class PointDrive extends CommandBase {
         m_timeoutS = timeoutS;
     }
 
+    public double xRobotPosition, yRobotPosition, heading, x, y, turn, leftFront, rightFront, leftBack, rightBack;
+
+
+
     @Override
     public void initialize() {
 
         runtime.reset();
 
-        double heading = m_drive.getHeading();
+        heading = m_drive.getHeading();
         double[] position = m_positionEstimator.updatePosition(m_drive, heading);
-        double xRobotPosition = position[0];
-        double yRobotPosition = position[1];
+        xRobotPosition = position[0];
+        yRobotPosition = position[1];
 
-        double x = xControl.calculate(m_xTarget, xRobotPosition, new ElapsedTime());
-        double y = yControl.calculate(m_yTarget, yRobotPosition, new ElapsedTime());
-        double turn = turnControl.calculate(m_turnTarget, heading, new ElapsedTime());
+        x = xControl.calculate(m_xTarget, xRobotPosition, new ElapsedTime());
+        y = yControl.calculate(m_yTarget, yRobotPosition, new ElapsedTime());
+        turn = turnControl.calculate(m_turnTarget, heading, new ElapsedTime());
+
+        double robotR = 10.75;
+        double turnD = Math.toRadians(turn) * robotR;
 
         // Rotate input vector by robot heading to achieve field-centric control
         double rotatedX = x * Math.cos(heading) + y * Math.sin(heading);
         double rotatedY = -x * Math.sin(heading) + y * Math.cos(heading);
 
         // Calculate individual motor powers
-        double leftFront = rotatedY + rotatedX + turn;
-        double rightFront = rotatedY - rotatedX - turn;
-        double leftBack = rotatedY - rotatedX + turn;
-        double rightBack = rotatedY + rotatedX - turn;
-
-        // Normalize motor powers to prevent exceeding maximum power
-        double maxPower = Math.max(Math.abs(leftFront), Math.max(Math.abs(rightFront),
-                Math.max(Math.abs(leftBack), Math.abs(rightBack))));
-        if (maxPower > 1) {
-            leftFront /= maxPower;
-            rightFront /= maxPower;
-            leftBack /= maxPower;
-            rightBack /= maxPower;
-        }
+        leftFront = rotatedY + rotatedX + turnD;
+        rightFront = rotatedY - rotatedX - turnD;
+        leftBack = rotatedY - rotatedX + turnD;
+        rightBack = rotatedY + rotatedX - turnD;
 
         m_drive.encoderDrive(m_speed, leftFront, rightFront, leftBack, rightBack);
     }

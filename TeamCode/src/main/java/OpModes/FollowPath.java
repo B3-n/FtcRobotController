@@ -6,6 +6,7 @@ import com.arcrobotics.ftclib.command.CommandOpMode;
 import Subsystems.FourWheelEncoderDrive;
 import Commands.PathPlanner;
 import Subsystems.PositionEstimator;
+import Commands.Telemtry;
 
 @Autonomous(name = "Follow Path", group = "Autonomous")
 public class FollowPath extends CommandOpMode{
@@ -25,5 +26,9 @@ public class FollowPath extends CommandOpMode{
 
         pathPlanner = new PathPlanner(positionEstimator, driveSubsystem);
         schedule(pathPlanner);
+
+        while (opModeIsActive()) {
+
+        }
     }
 }

@@ -18,7 +18,7 @@ public class PathPlanner extends SequentialCommandGroup {
                  timeout(seconds)
                 ) */
 
-                new PointDrive(positionEstimator, driveSubsystem, 0.5, 10, 10, 0, 40)
+                new PointDrive(positionEstimator, driveSubsystem, 0.1, 10, 10, 0, 40)
         );
     }
 }
