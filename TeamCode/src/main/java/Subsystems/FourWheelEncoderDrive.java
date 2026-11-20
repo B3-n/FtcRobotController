@@ -51,6 +51,7 @@ public class FourWheelEncoderDrive extends SubsystemBase {
         
         frontLeft.setInverted(true);
         backLeft.setInverted(true);
+        YEncoder.setInverted(true);
 
         frontLeft.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         frontRight.motor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
