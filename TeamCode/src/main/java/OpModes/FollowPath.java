@@ -2,12 +2,14 @@ package OpModes;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.arcrobotics.ftclib.command.CommandOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import Subsystems.FourWheelEncoderDrive;
 import Commands.PathPlanner;
 import Subsystems.PositionEstimator;
 import Commands.Telemtry;
 
+@Disabled
 @Autonomous(name = "Follow Path", group = "Autonomous")
 public class FollowPath extends CommandOpMode{
 
