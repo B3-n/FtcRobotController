@@ -1,14 +1,12 @@
 package Subsystems;
 
-import static Subsystems.FourWheelEncoderDrive.COUNTS_PER_INCH;
+import static Subsystems.FourWheelEncoderDrive.ENCODER_COUNTS_PER_INCH;
 
 public class PositionEstimator {
 
     FourWheelEncoderDrive m_driveSubsystem;
-    double prevFrontLeftEncoder;
-    double prevFrontRightEncoder;
-    double prevBackLeftEncoder;
-    double prevBackRightEncoder;
+    double prevXEncoder;
+    double prevYEncoder;
     double xPosition;
     double yPosition;
     double m_angle;
@@ -21,29 +19,15 @@ public class PositionEstimator {
         m_angle /= 360;
         m_angle *= 2 * Math.PI;
 
-        double frontLeftDistance = m_driveSubsystem.frontLeft.getCurrentPosition();
-        double frontRightDistance = m_driveSubsystem.frontRight.getCurrentPosition();
-        double backRightDistance = m_driveSubsystem.backRight.getCurrentPosition();
-        double backLeftDistance = m_driveSubsystem.backLeft.getCurrentPosition();
+        double xDistance  = m_driveSubsystem.xEncoder.getCurrentPosition();
+        double yDistance = m_driveSubsystem.yEncoder.getCurrentPosition();
 
-        double xDistance  = - (frontLeftDistance - prevFrontLeftEncoder)
-                + (frontRightDistance - prevFrontRightEncoder)
-                + (backLeftDistance  - prevBackLeftEncoder)
-                - (backRightDistance - prevBackRightEncoder);
-        double yDistance = (frontLeftDistance - prevFrontLeftEncoder)
-                + (frontRightDistance - prevFrontRightEncoder)
-                + (backLeftDistance  - prevBackLeftEncoder)
-                + (backRightDistance - prevBackRightEncoder);
+        prevXEncoder = xDistance;
+        prevYEncoder = yDistance;
+        
+        xDistance /= ENCODER_COUNTS_PER_INCH;
+        yDistance /= ENCODER_COUNTS_PER_INCH;
 
-        xDistance /= 4;
-        yDistance /= 4;
-        xDistance /= COUNTS_PER_INCH;
-        yDistance /= COUNTS_PER_INCH;
-
-        prevFrontLeftEncoder = frontLeftDistance;
-        prevFrontRightEncoder = frontRightDistance;
-        prevBackLeftEncoder = backLeftDistance;
-        prevBackRightEncoder = backRightDistance;
         xPosition += yDistance * Math.cos(m_angle) + xDistance * Math.cos(m_angle - Math.PI / 2);
         yPosition += yDistance * Math.sin(m_angle) + xDistance * Math.sin(m_angle - Math.PI / 2);
 
