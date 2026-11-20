@@ -16,6 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 public class FourWheelEncoderDrive extends SubsystemBase {
 
     Motor frontLeft, backLeft, frontRight, backRight;
+    Motor XEncoder, YEncoder;
     // MotorEx.Encoder frontLeft_encoder, backLeft_encoder, frontRight_encoder, backRight_encoder;
     private IMU imu;
     // private MecanumDriveOdometry odometry;
@@ -26,6 +27,12 @@ public class FourWheelEncoderDrive extends SubsystemBase {
     static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
             (WHEEL_DIAMETER_INCHES * 3.1415);
 
+    static final double COUNTS_PER_ENCODER_REV = 2000;
+    static final double ENCODER_DIAMETER_INCHES = 1.259;
+    static final double ENCODER_COUNTS_PER_INCH = COUNTS_PER_ENCODER_REV / (ENCODER_DIAMETER_INCHES * 3.14159265);
+    
+
+    
     HardwareMap m_hardwareMap;
 
     public FourWheelEncoderDrive(HardwareMap hardwareMap) {
@@ -38,6 +45,10 @@ public class FourWheelEncoderDrive extends SubsystemBase {
         backLeft = new Motor(m_hardwareMap, "BackLeft", Motor.GoBILDA.RPM_312);
         backRight = new Motor(m_hardwareMap, "BackRight", Motor.GoBILDA.RPM_312);
 
+        XEncoder = new Motor(m_hardwareMap, "XEncoder", Motor.GoBILDA.RPM_312);
+        YEncoder = new Motor(m_hardwareMap, "YEncoder", Motor.GoBILDA.RPM_312);
+        
+        
         frontLeft.setInverted(true);
         backLeft.setInverted(true);
 
@@ -65,6 +76,11 @@ public class FourWheelEncoderDrive extends SubsystemBase {
         frontRight.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backLeft.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         backRight.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        XEncoder.stopAndResetEncoder();
+        YEncoder.stopAndResetEncoder();
+        XEncoder.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        YEncoder.motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void initIMU() {
