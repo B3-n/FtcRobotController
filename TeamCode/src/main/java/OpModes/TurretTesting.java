@@ -39,7 +39,8 @@ public class TurretTesting extends LinearOpMode {
         while (opModeIsActive()) {
             CommandScheduler.getInstance().run();
             TelemetryPacket packet = new TelemetryPacket();
-            packet.put("RPS: ", Constants.Speeds.flyWheelSpeed);
+            packet.put("TARGET RPS: ", Constants.Speeds.flyWheelSpeed);
+            packet.put("ACTUAL RPS: ", Turret.realVelo/Constants.Speeds.fakeTele);
             dashboard.sendTelemetryPacket(packet);
         }
 
